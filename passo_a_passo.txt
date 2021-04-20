@@ -88,4 +88,66 @@ criar admin_controller.rb
 
   end
 
+1.5 e 1.6)
 
+routes
+
+  Rails.application.routes.draw do
+    devise_for :admins, skip: [:registrations], controllers: {sessions: 'admins/sessions' }
+    # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+    
+    namespace :admin do
+      #admin/posts
+      root to: "home#index"
+    end
+    
+  end
+
+-cria controllers/admin/home_controller.rb
+  class Admin::HomeController < AdminController
+    def index
+    end
+  end
+
+-cria controllers/admins/sessions_controller.rb
+  class Admins::SessionsController < Devise::SessionsController
+
+    def after_sign_out_path_for(admin)
+      new_admin_session_path
+    end
+
+  end
+
+-cria views/admin/home/index.html.erb
+  <h2>Seja bem-vindo ao painel administrativo</h2>
+
+-cria views/layouts/admin/_header.html.erb
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container">
+      <ul class="navbar-nav">
+        <li class="nav-item <%= current_page?(admin_root_path)? "active" : "" %>">
+          <%= link_to("Home", admin_root_path, class: "nav-link") %>
+        </li>
+        <li class="nav-item <%= current_page?(admin_root_path)? "active" : "" %>">
+          <%= link_to("Administradores", admin_root_path, class: "nav-link") %>
+        </li>
+        <li class="nav-item <%= current_page?(admin_root_path)? "active" : "" %>">
+          <%= link_to("Usuários", admin_root_path, class: "nav-link") %>
+        </li>
+        <li class="nav-item <%= current_page?(admin_root_path)? "active" : "" %>">
+          <%= link_to("Posts", admin_root_path, class: "nav-link") %>
+        </li>
+        
+      </ul>
+      <div class="nav-item d-flex">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <div class="py-2 mr-4" style="color:#fff;"><%= current_admin.email %></div>
+          </li>
+          <li class="nav-item">
+            <%= link_to("Sair", destroy_admin_session_path, method: :delete, class: "nav-link")%>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
