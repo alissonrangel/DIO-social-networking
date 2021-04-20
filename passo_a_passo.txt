@@ -39,3 +39,10 @@ criação de testes:
 
 cria as views especificadas da devise
 >rails g devise:views -v registrations sessions
+
+troca a view device/sessions/new pela do git hub do professor
+adiciona as imagens do git hub do professor
+estiliza a view application.html.erb:
+  <html style="height: 100%">
+  <body style="height: 100%">
+
