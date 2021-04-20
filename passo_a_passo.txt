@@ -1,0 +1,36 @@
+1.1)
+>rails new social_networking -d postgresql
+
+gem 'devise'
+>bundle install
+
+>rails g devise:install
+configs da devise
+
+>rails g devise admin
+
+>rails db:drop
+>rails db:create
+
+1.2)
+
+>rails db:migrate
+
+gem 'rspec-rails', '~>5.0.0'
+>bundle install
+
+>rails g rspec:install
+
+>rails g rspec:model admin
+
+criação de testes:
+  it "admin is valid" do
+    admin = Admin.new(email:'admin@admin.com', password:'123456')
+    expect(admin.email).to eql 'admin@admin.com'
+    expect(admin).to be_valid
+  end
+
+  it "admin is not valid" do
+    admin = Admin.new(email:'admin@admin.com')
+    expect(admin).to_not be_valid
+  end
