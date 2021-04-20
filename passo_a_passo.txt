@@ -231,3 +231,9 @@ criou migration para add name à tabela admins
     <% end %>
     </tbody>
   </table>
+
+2.2)
+  <li class="nav-item <%= current_page?(admin_admins_path)? "active" : "" %>">
+    <%= link_to("Administradores", admin_admins_path, class: "nav-link") %>
+  </li>
+
