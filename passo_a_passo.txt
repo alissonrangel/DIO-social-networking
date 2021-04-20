@@ -46,3 +46,46 @@ estiliza a view application.html.erb:
   <html style="height: 100%">
   <body style="height: 100%">
 
+1.4)
+
+no db/seeds.rb
+  Admin.create(email:'admin@admin.com', password:'123456')
+  puts "admin created"
+>rails db:seed
+
+altero application.html.erb 
+  <body style="height: 100%">
+    <%= notice %>
+    <%= alert %>
+    <%= content_for?(:content) ? yield(:content) : yield %>
+  </body>
+
+adiciono a view admin.html.erb em layouts pelo git hub do professor
+  <% content_for :content do %>
+    <%= render "layouts/admin/header" %>
+    <div class="container mt-5">
+      <%= yield %>
+    </div>
+  <% end %>
+  <%= render template: "layouts/application" %>
+
+criar admin_controller.rb
+  class AdminController < ApplicationController
+
+    before_action :authenticate_admin
+
+    def authenticate_admin
+      redirect_to new_admin_session_path unless current_admin?
+    end
+
+    def current_admin? # ? -> retorna um booleano
+      if current_admin.present?
+        true
+      else
+        false
+      end
+    end
+
+  end
+
+
