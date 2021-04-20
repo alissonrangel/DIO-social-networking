@@ -168,3 +168,66 @@ port: 5432
 >git push heroku main
 >heroku run rails db:migrate
 >heroku run rails db:seed
+
+
+routes.rb
+  namespace :admin do
+    #admin/posts
+    root to: "home#index"
+    resources :admins
+  end
+
+criou migration para add name à tabela admins
+  >rails g migration add_name_to_admins
+
+  class AddNameToAdmins < ActiveRecord::Migration[6.1]
+    def change
+      add_column :admins, :name, :string
+    end
+  end
+
+  >rails db:migrate
+
+-atualiza os testes, acrescentando name, pois passou a ser obrig, pelo validates do model
+
+  it "admin is valid" do
+    admin = Admin.new(name: "Admin First", email:'admin@admin.com', password:'123456')
+
+    expect(admin.email).to eql 'admin@admin.com'
+    expect(admin).to be_valid
+  end
+
+-adiciona validates no models admin
+
+  validates :name, presence: true
+
+-cria controllers/admin/admins_controller.rb
+  class Admin::AdminsController < AdminController
+    def index
+      @admins = Admin.all
+    end
+  end
+
+-cria a view views/admin/admins/index.html.erb
+  <h4>Admins</h4><br>
+
+  <table class="table table-dark">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nome</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Criado em</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @admins.each do |admin| %>
+      <tr>
+        <th scope="row"><%= admin.id %></th>
+        <td><%= admin.name %></td>
+        <td><%= admin.email %></td>
+        <td><%= admin.created_at %></td>
+      </tr>  
+    <% end %>
+    </tbody>
+  </table>
