@@ -237,3 +237,54 @@ criou migration para add name à tabela admins
     <%= link_to("Administradores", admin_admins_path, class: "nav-link") %>
   </li>
 
+2.3)
+
+- admins_controller.rb
+  def new
+    @admin = Admin.new
+  end
+
+  private 
+
+  def form_params
+    params.require(:admin).permit(:name, :email, :password, :password_confirmation)
+  end
+
+- views/admin/admins/index.html.erb
+<%= link_to 'New Admin', new_admin_admin_path, class: 'btn btn-link' %>
+
+-criar views/admin/admins/_form.html.erb
+<div class="card" style="background-color:#f6f6f6;">
+  <div class="card-body">
+    <%= form_with(model: [:admin, admin], local: true) do |f| %>
+      <div class="form-group">
+        <%= f.label :name %>
+        <%= f.text_field :name , class: 'form-control'%>
+      </div>
+      <div class="form-group">
+        <%= f.label :email %>
+        <%= f.email_field :email , class: 'form-control'%>
+      </div>
+      <div class="form-row">
+        <div class="col-6">
+            <div class="form-group">
+                <%= f.label :password %>
+                <%= f.password_field :password , class: 'form-control'%>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <%= f.label :password_confirmation %>
+                <%= f.password_field :password_confirmation , class: 'form-control'%>
+            </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Salvar</button>
+    <% end %>      
+  </div>
+</div>
+
+-criar views/admin/admins/new.html.erb
+<h2>Novo Administrador</h2>
+
+<%= render 'form', admin: @admin %>

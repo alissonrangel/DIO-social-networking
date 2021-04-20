@@ -4,4 +4,13 @@ class Admin::AdminsController < AdminController
     @admins = Admin.all
   end
 
+  def new
+    @admin = Admin.new
+  end
+
+  private 
+
+  def form_params
+    params.require(:admin).permit(:name, :email, :password, :password_confirmation)
+  end
 end
