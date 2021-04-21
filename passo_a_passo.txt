@@ -489,3 +489,24 @@ FactoryBot.define do
 end
 
 Obs. Não consegui executar o FactoryBot no rails c, mas consegui no rspec
+
+4.4)
+- acrescentei: assets/images/login_bg2.jpeg
+
+- alterei views/devise/sessions/new.html.erb
+# para funcionar com user e admin, mas layouts diferentes do mesmo arquivo
+
+#1
+<div style="height: 100%!important;background-image: url('<%= resource_name == :admin ? image_path('login_bg.jpg') : image_path('login_bg2.jpg') %>'); background-size: cover">  
+
+#9
+<% if resource_name == :admin  %>
+  <h5 class="text-center text-muted font-weight-normal mb-4">Acesso ao Painel Administrativo</h5>
+<% end %>
+
+#31
+<% if resource_name == :user %>
+  <%= link_to new_user_registration_path, class: 'd-flex justify-content-center align-items-center mt-4' do %>
+    Cadastrar
+  <% end %>
+<% end %> 
