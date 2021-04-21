@@ -400,3 +400,33 @@ criou migration para add name à tabela admins
   def set_admin
     @admin = Admin.find(params[:id])
   end
+
+4.1)
+
+- Procfile
+# reinicia o servidor remoto
+web: bundle exec puma -C config/puma.rb
+
+# faz as migrações
+release: bundle exec rake db:migrate
+
+- app/assets/images/test-avatar.png
+- spec/support/test-avatar.png
+
+>rais g devise user
+cria o model e os tests no rspec
+>rails g migration add_fields_to_users
+>rails db:migrate
+
+>rails active_storage:install
+>rails db:migrate
+
+- app/models/user.rb
+  validates :phone, :name, :avatar, presence: true
+  has_one_attached :avatar
+
+- spec/rails_helper.rb 
+  # no final do arquivo, após o end
+  class Rack::Test::UploadedFile
+    attr_reader :headers
+  end
