@@ -331,3 +331,35 @@ criou migration para add name à tabela admins
       </ul>
     </div>
   <% end %>
+
+3.5) deletar admin
+
+- controllers/admin/admins_controller.rb
+  def update
+    @admin = Admin.find(params[:id])
+    params = form_params.to_h
+
+    # se password não preenchido
+    params = params.except!(:password, :password_confirmation) if params[:password].blank?
+    
+    if @admin.update(params)
+      redirect_to admin_admins_path
+    else
+      render :edit
+    end
+  end
+
+  def destroy
+    @admin = Admin.find(params[:id])
+    @admin.destroy
+    redirect_to admin_admins_path
+  end
+
+- views/admin/admins/_form.html.erb
+  # após o button de submit
+  <%= link_to 'Voltar', admin_admins_path, class: 'btn btn-secondary ml-3' %>
+
+- views/admin/admins/index.html.erb
+
+  # adiciona mais uma coluna
+  <td><%= link_to 'Deletar', admin_admin_path(admin), method: :delete, data: {confirm:"Are you sure?"}, class: 'btn btn-danger btn-sm' %></td>
