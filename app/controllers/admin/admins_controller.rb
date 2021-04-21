@@ -1,11 +1,25 @@
 class Admin::AdminsController < AdminController
 
   def index
-    @admins = Admin.all
+    @admins = Admin.order(id: :desc)
   end
 
   def new
     @admin = Admin.new
+  end
+
+  def create
+    @admin = Admin.new(form_params)
+
+    if @admin.save
+      redirect_to admin_admins_path
+    else
+      render :new
+    end
+  end
+
+  def edit
+    @admin = Admin.find(params[:id])
   end
 
   private 

@@ -288,3 +288,46 @@ criou migration para add name à tabela admins
 <h2>Novo Administrador</h2>
 
 <%= render 'form', admin: @admin %>
+
+2.4)
+
+-controllers/admin/admins_controller.rb
+  def create
+    @admin = Admin.new(form_params)
+
+    if @admin.save
+      redirect_to admin_admins_path
+    else
+      render :new
+    end
+  end
+
+  def edit
+    @admin = Admin.find(params[:id])
+  end
+
+-views/admin/admins/_form.html.erb
+  #colocado dentro do form
+  <%= render 'layouts/form_errors', record: admin%> 
+
+- views/admin/admins/index.html.erb
+
+  # acrescenta uma coluna na tabela
+  <td><%= link_to 'Editar', edit_admin_admin_path(admin), class: 'btn btn-warning btn-sm' %></td>
+
+- cria views/admin/admins/edit.html.erb
+  <h2>Editar Administrador #<%= @admin.id %></h2>
+  <%= render 'form', admin: @admin %>
+
+- cria views/layouts/_form_errors.html.erb
+  # cria essa partial que é colocada dentro do _form
+  <% if record && record.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <h4 class="alert-heading"><%= t('.error_on_save') %></h4>
+      <ul>
+      <% record.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
