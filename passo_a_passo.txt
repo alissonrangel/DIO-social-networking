@@ -510,3 +510,77 @@ Obs. Não consegui executar o FactoryBot no rails c, mas consegui no rspec
     Cadastrar
   <% end %>
 <% end %> 
+
+5.1) Area privada do usuario na rede social
+
+- app/models/user.rb ->tirei avatar para poder fazer um cadastro
+# validates :phone, :name, :avatar, presence: true
+  validates :phone, :name, presence: true
+
+- routes.rb
+  root to: "user/timeline#index"
+
+  namespace :user do
+
+  end
+
+- app/controllers/user/timeline_controller
+class User::TimelineController < UserController
+    def index     
+    end
+end
+
+- app/controllers/user_controller.rb
+class UserController < ApplicationController
+  before_action :authenticate_user
+
+  def authenticate_user
+    redirect_to new_user_session_path unless current_user
+  end
+end
+
+- app/views/layouts/user.html.erb
+<% content_for :content do %>
+  <%= render "layouts/user/header" %>
+  <div class="container mt-5">
+    <%= yield %>
+  </div>
+<% end %>
+<%= render template: "layouts/application" %>
+
+- app/views/layouts/user/_header.html.erb
+<nav class="navbar navbar-expand-sm bg-primary navbar-dark" style="background-color:#000080!important;">
+  <div class="container" >
+    <%= image_tag("logo.png", alt: "logo", class: 'navbar-brand', style: "height:40px;")%>
+    <ul class="navbar-nav">
+      <li class="nav-item <%= current_page?(root_path)? "active" : "" %>">
+        <%= link_to("Timeline", root_path, class: "nav-link") %>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Followers</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Following</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Quem eu posso seguir</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Meu perfil</a>
+      </li>
+    </ul>
+    <div class="nav-item d-flex">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <div class="py-2 mr-4" style="color:#fff;"><%= current_user.email %></div>
+        </li>
+        <li class="nav-item">
+          <%= link_to("Sair", destroy_user_session_path, method: :delete, class: "nav-link")%>          
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+- app/views/user/timeline/index.html.erb
+<h2>Seja bem-vindo à timeline</h2>
