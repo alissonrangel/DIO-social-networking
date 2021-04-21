@@ -470,3 +470,22 @@ cria o model e os tests no rspec
 
     expect(user).to_not be_valid
   end
+
+4.3) FactoryBot
+
+- gemfile
+  gem 'factory_bot_rails'
+>bundle install
+
+- criar spec/factories/users.rb
+FactoryBot.define do
+  factory :user do
+    name { 'Alisson'}
+    email {'alisson@mail.com'}
+    phone {'999876543'}
+    avatar {Rack::Test::UploadedFile.new(Rails.root.join("spec/support/test-avatar.png"), "image/png")}
+    password {"123456"}
+  end
+end
+
+Obs. Não consegui executar o FactoryBot no rails c, mas consegui no rspec

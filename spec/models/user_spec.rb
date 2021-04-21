@@ -2,14 +2,16 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   it "user is valid" do
-    user = User.new(
-      name: 'Alisson',
-      email: 'alisson@mail.com',
-      phone: '999876543',
-      avatar: fixture_file_upload(Rails.root.join("spec","support","test-avatar.png"), "image/png"),
-      password: "123456"
-    )
-
+    
+    # user = User.new(
+    #   name: 'Alisson',
+    #   email: 'alisson@mail.com',
+    #   phone: '999876543',
+    #   avatar: fixture_file_upload(Rails.root.join("spec","support","test-avatar.png"), "image/png"),
+    #   password: "123456"
+    # )
+    user = FactoryBot.create(:user)
+    puts user.name
     expect(user).to be_valid
   end
 
