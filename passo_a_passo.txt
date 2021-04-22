@@ -711,3 +711,5 @@ end
   <% end %>
   </tbody>
 </table>
+
+6.4) deploy no gituhub e no heroku - ok o funcionamento
