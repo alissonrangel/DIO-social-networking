@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :user do
-    name { 'Alisson'}
-    email {'alisson@mail.com'}
+    sequence(:name) { |c| "User#{c}"}
+    sequence(:email){ |n| "user#{n}@mail.com"}
     phone {'999876543'}
     avatar {Rack::Test::UploadedFile.new(Rails.root.join("spec/support/test-avatar.png"), "image/png")}
     password {"123456"}

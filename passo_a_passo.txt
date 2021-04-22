@@ -1010,3 +1010,36 @@ end
 - app/models/user.rb
 has_many :followers_subscriptions, foreign_key: :followed_id, class_name: 'Subscriptions'
 has_many :followers, through: :followers_subscriptions, source: :followed_by
+
+8.2)
+
+- app/models/subscription.rb
+belongs_to :followed, class_name: 'User'
+  belongs_to :followed_by, class_name: 'User'
+
+- app/models/user.rb
+has_many :following_subscriptions, foreign_key: :followed_by_id, class_name: 'Subscription'
+has_many :following, through: :following_subscriptions, source: :followed
+
+- spec/factories/users.rb
+factory :user do
+  sequence(:name) { |c| "User#{c}"}
+  sequence(:email){ |n| "user#{n}@mail.com"}
+  phone {'999876543'}
+  avatar {Rack::Test::UploadedFile.new(Rails.root.join("spec/support/test-avatar.png"), "image/png")}
+  password {"123456"}
+end
+
+- cria: spec/models/subscription_spec.rb
+require 'rails_helper'
+
+RSpec.describe Subscription, type: :model do
+  
+  it "user can follow another user" do
+    matt = FactoryBot.create(:user)
+    puts(matt.name)
+    bob = FactoryBot.create(:user)
+    puts(bob.name)
+    Subscription.create(followed: bob, followed_by: matt)  
+  end
+end
