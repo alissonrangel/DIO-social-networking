@@ -10,9 +10,9 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Following</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Quem eu posso seguir</a>
+      </li>  
+      <li class="nav-item <%= current_page?(user_potencial_to_follow_path)? "active" : "" %>">
+        <%= link_to("Quem eu posso seguir", user_potencial_to_follow_path, class: "nav-link") %>
       </li>
       <li class="nav-item <%= current_page?(user_profile_path)? "active" : "" %>">
         <%= link_to("Meu perfil", user_profile_path, class: "nav-link") %>

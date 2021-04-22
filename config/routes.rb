@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   namespace :user do
     get 'profile', to: "profile#show"
+    get 'potencial_to_follow', to: "profile#potencial_to_follow"
     resources :posts, only: :create
   end
   
