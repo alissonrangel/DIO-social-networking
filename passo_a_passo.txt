@@ -918,3 +918,69 @@ class User::PostsController < UserController
     end
   
   end
+
+7.4)
+
+- app/views/layouts/admin/_header.html.erb
+# adiciona o path correto para os posts do painel do admin
+<li class="nav-item <%= current_page?(admin_posts_path)? "" : "" %>">
+  <%= link_to("Posts", admin_posts_path, class: "nav-link") %>
+</li>
+
+- config/routes.rb
+
+namespace :admin do
+  #admin/posts
+  root to: "home#index"
+  resources :admins
+  resources :users, only: :index
+  resources :posts, only: [:index, :show] #
+end
+
+- criar app/controllers/admin/posts_controller.rb
+class Admin::PostsController < AdminController    
+  
+  def index
+    @posts = Post.order(created_at: :desc)
+  end
+
+  def show
+    @post = Post.find(params[:id])
+  end
+end
+
+- criar: app/views/admin/posts/index.html.erb
+<h4>Posts</h4><br>
+
+<table class="table table-dark">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Texto</th>
+      <th scope="col">Criador</th>
+      <th scope="col">Criado em</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% @posts.each do |post| %>
+    <tr>
+      <th scope="row"><%= post.id %></th>      
+      <td><%= link_to post.body.truncate(30), admin_post_path(post) %></td>      
+      <td><%= post.user.name %></td>
+      <td><%= post.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+    </tr>  
+  <% end %>
+  </tbody>
+</table>
+
+- criar: app/views/admin/posts/show.html.erb
+<h4>Post #<%= @post.id %></h4>
+<div class="card text-white bg-dark mb-3 mt-3">
+  <div class="card-header"><%= @post.user.name %></div>
+  <div class="card-body">
+  <small class="text-muted"><%= @post.created_at.strftime("%d/%m/%Y %H:%M") %></small>
+  <p class="card-text">
+    <%= @post.body %>
+  </p>
+  </div>
+</div>
