@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     #admin/posts
     root to: "home#index"
     resources :admins
+    resources :users, only: :index
   end
 
   root to: "user/timeline#index"
