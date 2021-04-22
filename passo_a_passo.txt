@@ -713,3 +713,67 @@ end
 </table>
 
 6.4) deploy no gituhub e no heroku - ok o funcionamento
+
+7.1)
+
+- criar migration
+>rails g migration create_posts
+
+- db/migrate/20210422175745_create_posts.rb
+class CreatePosts < ActiveRecord::Migration[6.1]
+  def change
+    create_table :posts do |t|
+      t.string :body
+      t.references :user, foreign_key: true
+      
+      t.timestamps
+    end
+  end
+end
+
+>rails db:migrate
+
+- criar model Post:  app/models/post.rb
+class Post < ApplicationRecord
+  
+  belongs_to :user
+end
+
+- criar factory para testes: spec/factories/post.rb
+FactoryBot.define do
+  factory :post do
+    body { 'Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    Ut enim ad minim veniam.'}
+  end
+end
+
+- criar testes: spec/models/post_spec.rb
+require 'rails_helper'
+
+RSpec.describe Post, type: :model do
+  it "post is valid" do
+    post = FactoryBot.build(:post)
+
+    expect(post).to_not be_valid
+
+    post.user = FactoryBot.build(:user)
+    post.save
+
+    expect(post).to be_valid
+  end
+
+  it "post belongs to user" do
+    user = FactoryBot.create(:user)
+    post = FactoryBot.create(:post, user: user)
+
+    expect(post.user).to eql user
+  end
+
+  it "user has many posts" do
+    user = FactoryBot.create(:user)
+    post = FactoryBot.create(:post, user: user)
+
+    expect(user.posts).to include post
+  end
+end
