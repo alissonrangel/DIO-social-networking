@@ -9,4 +9,7 @@ class User < ApplicationRecord
 
   has_one_attached :avatar
   has_many :posts
+
+  has_many :followers_subscriptions, foreign_key: :followed_id, class_name: 'Subscriptions'
+  has_many :followers, through: :followers_subscriptions, source: :followed_by
 end
