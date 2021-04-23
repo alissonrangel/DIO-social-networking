@@ -1449,3 +1449,15 @@ end
 - app/views/user/_post_card.html.erb
 <i style="font-size:18px;" class="far fa-thumbs-up"></i><span class="ml-2">25</span>
 
+11.2)
+
+- app/models/post.rb
+def liked_by_user?(user)
+  likes.where(user: user).present?
+end
+
+- app/views/user/_post_card.html.erb
+<%= link_to nil, {class: "like-toggle", id: post.id, remote: true} do %>    
+  <i style="font-size:18px; color: <%= post.liked_by_user?(current_user) ? '#80c0ff' : '#fff' %>" class="far fa-thumbs-up"></i>
+<% end %>
+<span class="ml-2"><%=post.likes.count %></span>
