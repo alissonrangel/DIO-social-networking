@@ -1288,3 +1288,54 @@ end
     <% end %>  
   </div>
 </div>
+
+10.2)
+
+- app/views/user/_post_card.html.erb
+# 2:
+<div class="card-header"><%= link_to post.user.name, post.user == current_user ? user_profile_path : user_user_path(post.user) %></div>
+
+- deleted: app/views/user/profile/_user_card_header.html.erb
+
+- criar: app/views/user/_user_card_header.html.erb
+<h5 class="card-header">
+  <%= image_tag(user.avatar, class: 'ui-w-100-forced rounded-circle mr-3', style: 'width: 90px; height: 90px') %> <%= user.name %>
+  <br><span style="font-size:14px;">Seguidores:</span> <span style="font-size:16px;" class="badge badge-info mr-3"><%= user.followers.count %></span>
+  <span style="font-size:14px;">Seguindo:</span> <span style="font-size:16px;" class="badge badge-info"><%= user.following.count %></span>
+</h5>
+
+- app/views/user/profile/show.html.erb
+#4:
+<%= render("user/user_card_header", user: current_user) %>      
+
+- config/routes.rb
+namespace :user do
+  # ...
+  resources :users, only: :show
+  # ...
+end
+
+- criar: app/controllers/user/users_controller.rb
+class User::UsersController < UserController
+  def show
+    @user = User.find(params[:id])
+  end
+end
+
+- criar: app/views/user/users/show.html.erb
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card">
+      <%= render("user/user_card_header", user: @user) %>      
+      <div class="card-body">
+        Email:<p class="card-text text-muted"><%= @user.email %></p>
+        Telefone:<p class="card-text text-muted"><%= @user.phone %></p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <% @user.posts.order(created_at: :desc).each do |post| %>
+      <%= render 'user/post_card', post: post %>
+    <% end %>
+  </div>
+</div>
