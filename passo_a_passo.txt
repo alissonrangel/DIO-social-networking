@@ -1634,3 +1634,33 @@ RSpec.describe Comment, type: :model do
     expect(post.comments.first).to eql comment
   end
 end
+
+12.2)
+
+- app/controllers/user/profile_controller.rb
+def show
+  @post = Post.new
+  @comment = Comment.new
+end
+
+- app/controllers/user/timeline_controller.rb
+# dentro da action index
+@comment = Comment.new
+
+- app/controllers/user/users_controller.rb
+# dentro da action show
+@comment = Comment.new
+
+- app/views/user/_post_card.html.erb
+# depois do fim
+<%= form_with(model: [:user, @comment]) do |f| %>
+  <div class="form-group">    
+    <%= f.text_area :body, rows: 2, class: 'form-control', placeholder: 'Escreva seu comentário...', require: true %>    
+  </div>
+  <div class="d-flex">
+    <button type="submit" class="btn btn-sm btn-primary ml-auto">Enviar</button>
+  </div>
+<% end %>
+
+- config/routes.rb
+resources :comments, only: [:create, :destroy]

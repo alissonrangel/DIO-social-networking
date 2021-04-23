@@ -4,5 +4,6 @@ class User::TimelineController < UserController
         ids = current_user.following.pluck(:id)
         ids << current_user.id
         @posts = Post.where(user_id: ids).order(created_at: :desc)
+        @comment = Comment.new
     end
 end
