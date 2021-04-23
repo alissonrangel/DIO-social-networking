@@ -1664,3 +1664,130 @@ end
 
 - config/routes.rb
 resources :comments, only: [:create, :destroy]
+
+12.3)
+- app/views/user/_post_card.html.erb
+# primeira linha
+style="font-size: 17px"
+
+# depois do fim
+<%= form_with(model: [:user, @comment]) do |f| %>
+  <div class="form-group">    
+    <%= f.text_area :body, rows: 2, class: 'form-control', placeholder: 'Escreva seu comentário...', require: true %>    
+  </div>
+  <div class="d-flex">    
+    <%= link_to 'Enviar', user_comments_path, method: :post %>
+  </div>
+<% end %>
+<% post.comments.order(created_at: :desc).each do |comment| %>
+  <%= render 'comment_card', comment: comment %>
+<% end %>
+
+- criar: app/views/user/_comment_card.html.erb
+<div class="card text-white bg-dark mb-3 mt-3" style="font-size: 14px; background-color: #464646">
+  <div class="card-header">
+    <%= link_to comment.user.name, comment.user == current_user ? user_profile_path : user_user_path(comment.user) %>
+    <% if comment.user == current_user  %>
+      <%= link_to user_comment_path(comment), method: :delete, class: 'close text-white' do %>
+        <span aria-hidden="true">&times;</span>
+      <% end %>
+    <% end %>    
+  </div>
+  <div class="card-body">
+    <small class="text-muted"><%= comment.created_at.strftime("%d/%m/%Y %H:%M") %></small>
+    <p class="card-text"><%= comment.body %></p>
+  </div>
+</div>
+
+- criei, antes do prof, mas não finalizei: app/controllers/user/comments_controller.rb
+class User::CommentsController < UserController
+  def create
+    f_params = form_params.merge(user: current_user)
+
+    @comment = Comment.new(f_params)      
+
+    if @post.save
+      redirect_to user_profile_path
+    else
+      render "user/profile/show"
+    end
+  end
+  private
+  def form_params
+    params.require(:comment).permit(:body)
+  end
+end
+
+12.4)
+
+- app/javascript/packs/application.js
+
+import $ from 'jquery';
+global.$ = jQuery;
+
+- app/views/user/_post_card.html.erb
+#1
+style="font-size: 17px"
+
+#fim
+<%= form_with(model: [:user, @comment]) do |f| %>
+  <%= hidden_field(:post_id, value: post.id) %>
+  <div class="form-group">    
+    <%= f.text_area :body, rows: 2, class: 'form-control', placeholder: 'Escreva seu comentário...', require: true %>    
+  </div>
+  <div class="d-flex">    
+    <%= link_to 'Enviar', user_comments_path, method: :post %>
+  </div>
+<% end %>
+<div id="post<%= post.id %>-comments">
+  <% post.comments.order(created_at: :desc).each do |comment| %>
+    <%= render 'comment_card', comment: comment %>
+  <% end %>
+</div>
+
+- config/webpack/environment.js
+
+# no meio
+const webpack = require("webpack")
+environment.plugins.append("Provide", new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery'
+}))
+
+- criar: app/views/user/_comment_card.html.erb
+<div class="card text-white bg-dark mb-3 mt-3" style="font-size: 14px; background-color: #464646">
+  <div class="card-header">
+    <%= link_to comment.user.name, comment.user == current_user ? user_profile_path : user_user_path(comment.user) %>
+    <% if comment.user == current_user  %>
+      <%= link_to user_comment_path(comment), method: :delete, class: 'close text-white' do %>
+        <span aria-hidden="true">&times;</span>
+      <% end %>
+    <% end %>    
+  </div>
+  <div class="card-body">
+    <small class="text-muted"><%= comment.created_at.strftime("%d/%m/%Y %H:%M") %></small>
+    <p class="card-text"><%= comment.body %></p>
+  </div>
+</div>
+
+- app/controllers/user/comments_controller.rb
+class User::CommentsController < UserController
+  def create
+    f_params = form_params.merge(user: current_user)
+    @comment = Comment.new(f_params)      
+    if @comment.save
+      respond_to do |format|
+          format.js { render "create" }
+      end
+    else
+      redirect_to root_path
+    end
+  end
+  private
+  def form_params
+    params.require(:comment).permit(:body, :post_id)
+  end
+end
+
+- criar: app/views/user/comments/create.js.erb
+//vazio
