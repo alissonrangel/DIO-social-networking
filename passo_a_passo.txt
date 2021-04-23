@@ -1101,3 +1101,48 @@ end
     </div>
   <% end %>
 </div>
+
+9.2)
+
+- app/controllers/user/profile_controller.rb
+def potencial_to_follow
+  @potencial_to_follow = User.where.not(id: current_user.following.pluck(:id)).where.not(id: current_user.id)    
+end
+
+- app/views/user/profile/potencial_to_follow.html.erb
+<div class="row">
+  <% @potencial_to_follow.each do |user| %>
+    <div class="col-lg-3">
+      <div class="card">
+        <h5 class="card-header">
+          <%= image_tag(user.avatar, class: 'ui-w-100-forced rounded-circle mr-3', style: 'width: 90px; height: 90px') %> <%= user.name %>
+          <br><span style="font-size:14px;">Seguidores:</span> <span style="font-size:16px;" class="badge badge-info mr-3"><%= user.followers.count %></span>
+          <span style="font-size:14px;">Seguindo:</span> <span style="font-size:16px;" class="badge badge-info"><%= user.following.count %></span>
+        </h5>
+        <div class="card-body">
+          Email:<p class="card-text text-muted"><%= user.email %></p>
+          Telefone:<p class="card-text text-muted"><%= user.phone %></p>
+          <%= link_to 'Follow', user_follow_path(id: user.id), method: :post, class: 'btn btn-success' %>
+        </div>        
+      </div>
+    </div>
+  <% end %>
+</div>
+
+- config/routes.rb
+namespace :user do
+  get 'profile', to: "profile#show"
+  get 'potencial_to_follow', to: "profile#potencial_to_follow"
+  resources :posts, only: :create
+
+  post 'follow/:id', to: "subscriptions#follow", as: :follow
+end
+
+- criar: app/controllers/user/subscriptions_controller.rb
+class User::SubscriptionsController < UserController
+  def follow
+    user_to_follow = User.find_by(id: params[:id])
+    Subscription.create(followed_by: current_user, followed: user_to_follow)
+    redirect_to user_potencial_to_follow_path
+  end
+end
