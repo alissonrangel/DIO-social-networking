@@ -1339,3 +1339,45 @@ end
     <% end %>
   </div>
 </div>
+
+10.3)
+- app/controllers/user/posts_controller.rb
+def destroy
+  # post = Post.find(params[:id])
+  post = current_user.posts.find(params[:id])
+  post.destroy
+  redirect_to user_profile_path
+end
+
+- app/views/user/_post_card.html.erb
+<div class="card text-white bg-dark mb-3 mt-3">
+  <div class="card-header">
+    <%= link_to post.user.name, post.user == current_user ? user_profile_path : user_user_path(post.user) %>
+    <% if post.user == current_user  %>
+      <%= link_to user_post_path(post), method: :delete, class: 'close text-white' do %>
+        <span aria-hidden="true">&times;</span>
+      <% end %>
+    <% end %>    
+  </div>
+  <div class="card-body">
+    <small class="text-muted"><%= post.created_at.strftime("%d/%m/%Y %H:%M") %></small>
+    <p class="card-text">
+      <%= post.body %>
+    </p>
+  </div>
+</div>
+
+- app/views/user/_user_card_header.html.erb
+<h5 class="card-header">
+  <%= image_tag(user.avatar, class: 'ui-w-100-forced rounded-circle mr-3', style: 'width: 90px; height: 90px') %> 
+  <%= link_to user.name, user == current_user ? user_profile_path : user_user_path(user) %>
+  <br><span style="font-size:14px;">Seguidores:</span> <span style="font-size:16px;" class="badge badge-info mr-3"><%= user.followers.count %></span>
+  <span style="font-size:14px;">Seguindo:</span> <span style="font-size:16px;" class="badge badge-info"><%= user.following.count %></span>
+</h5>
+
+- config/routes.rb
+namespace :user do
+  # ...
+  resources :posts, only: [:create, :destroy]
+  # ...
+end
