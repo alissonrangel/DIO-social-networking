@@ -1571,3 +1571,66 @@ document.addEventListener("turbolinks:load", function () {
 
 <th scope="col">Likes</th>
 <td><%= post.likes.count %></td>
+
+12) Criação e exclusão de comentário do post
+
+12.1)
+- criar: db/migrate/20210423214318_create_comments.rb
+>rails g migration create_comments
+
+class CreateComments < ActiveRecord::Migration[6.1]
+  def change
+    create_table :comments do |t|
+
+      t.references :user, foreign_key: true
+      t.references :post, foreign_key: true
+      t.string :body
+
+      t.timestamps
+    end
+  end
+end
+
+-criar app/models/comment.rb
+
+class Comment < ApplicationRecord
+  
+  belongs_to :user
+  belongs_to :post
+  validates :body, presence: true
+end
+
+- app/models/post.rb
+has_many :comments
+
+- app/models/user.rb
+has_many :comments
+
+- modified name do arquivo: spec/factories/post.rb -> spec/factories/posts.rb
+
+- criar: spec/factories/comments.rb
+FactoryBot.define do
+    factory :comment do
+        body { 'Que post legal.'}
+    end
+end
+
+- criar: spec/models/comment_spec.rb
+require 'rails_helper'
+
+RSpec.describe Comment, type: :model do
+  it "user comments on a post" do
+    matt = FactoryBot.create(:user)    
+    bob = FactoryBot.create(:user)
+
+    post = FactoryBot.create(:post, user: matt)
+
+    comment = FactoryBot.create(:comment, post: post, user: bob)
+    
+    expect(post.comments.count).to eql 1
+    expect(post.comments.first.user).to eql bob
+
+    expect(post.comments.first.body).to eql 'Que post legal.'
+    expect(post.comments.first).to eql comment
+  end
+end
