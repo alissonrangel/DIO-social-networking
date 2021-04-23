@@ -1461,3 +1461,60 @@ end
   <i style="font-size:18px; color: <%= post.liked_by_user?(current_user) ? '#80c0ff' : '#fff' %>" class="far fa-thumbs-up"></i>
 <% end %>
 <span class="ml-2"><%=post.likes.count %></span>
+
+11.3)
+
+- app/views/layouts/application.html.erb
+  remover o srcipt do jquery que está no head
+
+> yarn add jquery
+
+- criar: app/javascript/packs/like_toggle.js
+document.addEventListener("turbolinks:load", function () {
+    
+    $(".like-toggle").click(function () {
+        var button = $(this);
+        
+        $.ajax({
+            type: 'POST',
+            url: `user/posts/${button.attr("id")}/like_toggle`,
+            success: function () {
+                
+            }
+        });
+    });
+
+    function toggleButton(button, data) {
+        buttonIcon = button.children().first()
+    }
+});
+
+- app/javascript/packs/application.js
+import "./like_toggle"
+
+- app/controllers/user/posts_controller.rb
+skip_before_action :verify_authenticity_token
+# ...
+def like_toggle
+  post = Post.find(params[:id])
+  like = Like.find_by(user: current, post: post)
+
+  if like.present?
+    like.destroy
+    respond_to {|format| format.json { render json: {liked: false, likesCount: post.likes.count}}}
+  else
+    like.create(user: current_user, post: post)
+    respond_to {|format| format.json { render json: {liked: true, likesCount: post.likes.count}}}
+  end
+end
+
+- config/routes.rb
+namespace :user do
+# ...
+  resources :posts, only: [:create, :destroy] do
+    member do
+      post :like_toggle
+    end
+  end
+# ...
+end
