@@ -1252,3 +1252,39 @@ end
 
 - app/views/user/profile/potencial_to_follow.html.erb
 <div class="col-lg-4">
+
+10) Timeline e tela de detalhes de outros usuários
+
+10.1)
+
+- app/controllers/user/timeline_controller.rb
+def index
+  ids = current_user.following.pluck(:id)
+  ids << current_user.id
+  @posts = Post.where(user_id: ids).order(created_at: :desc)
+end
+
+- criar partial: app/views/user/_post_card.html.erb
+<div class="card text-white bg-dark mb-3 mt-3">
+  <div class="card-header"><%= post.user.name %></div>
+  <div class="card-body">
+  <small class="text-muted"><%= post.created_at.strftime("%d/%m/%Y %H:%M") %></small>
+  <p class="card-text">
+    <%= post.body %>
+  </p>
+  </div>
+</div>
+
+- app/views/user/profile/show.html.erb
+<% current_user.posts.order(created_at: :desc).each do |post| %>
+  <%= render 'user/post_card', post: post %>
+<% end %>
+
+- app/views/user/timeline/index.html.erb
+<div class="row">
+  <div class="offset-2 col-lg-8">
+    <% @posts.each do |post| %>
+      <%= render 'user/post_card', post: post %>
+    <% end %>  
+  </div>
+</div>
