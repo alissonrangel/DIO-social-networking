@@ -6,10 +6,10 @@ class User::CommentsController < UserController
     @post = @comment.post
 
     if @comment.save
-      # respond_to do |format|
-      #   format.js { render "create" }
-      # end
-      redirect_to root_path
+      respond_to do |format|
+        format.js { render "create" }
+      end
+      # redirect_to root_path
     end
   end
 
