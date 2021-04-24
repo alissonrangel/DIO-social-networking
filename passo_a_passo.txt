@@ -1953,3 +1953,32 @@ document.addEventListener("turbolinks:load", function () {
 
 - app/javascript/packs/application.js
 import "./comment_toggle"
+
+13.2) imagem nos posts e comments, fix remove post quando tem comentarios
+
+- app/controllers/user/posts_controller.rb
+# inclusão do @comment
+def create
+  f_params = form_params.merge(user: current_user)
+
+  @post = Post.new(f_params)   
+  @comment = Comment.new   
+
+  if @post.save
+    redirect_to user_profile_path
+  else
+    render "user/profile/show"
+  end
+end
+
+- app/models/post.rb
+has_many :likes, dependent: :destroy
+has_many :comments, dependent: :destroy
+
+- app/views/user/_comment_card.html.erb
+<%= image_tag(comment.user.avatar, class: 'ui-w-100-forced rounded-circle mr-3', style: 'width: 23px; height: 23px') %> 
+
+- app/views/user/_post_card.html.erb
+<%= image_tag(post.user.avatar, class: 'ui-w-100-forced rounded-circle mr-3', style: 'width: 30px; height: 30px') %> 
+
+<%= link_to user_post_path(post), method: :delete, data: {confirm: "Você tem certeza que deseja apagar esse post?"}, class: 'close text-white' do %>

@@ -4,7 +4,8 @@ class User::PostsController < UserController
     def create
       f_params = form_params.merge(user: current_user)
   
-      @post = Post.new(f_params)      
+      @post = Post.new(f_params)   
+      @comment = Comment.new   
   
       if @post.save
         redirect_to user_profile_path
