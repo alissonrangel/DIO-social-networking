@@ -19,12 +19,12 @@
   </div>
 </div>
 <%= form_with(model: [:user, @comment]) do |f| %>
-  <%= hidden_field(:post_id, value: post.id) %>
+  <%= f.hidden_field(:post_id, value: post.id) %>
   <div class="form-group">    
-    <%= f.text_area :body, rows: 2, class: 'form-control', placeholder: 'Escreva seu comentário...', require: true %>    
+    <%= f.text_area :body, rows: 2, class: 'form-control', placeholder: 'Escreva seu comentário...', required: true %>    
   </div>
   <div class="d-flex">    
-    <%= link_to 'Enviar', user_comments_path, method: :post %>
+    <button type="submit" class="btn btn-sm btn-primary ml-auto">Enviar</button>
   </div>
 <% end %>
 <div id="post<%= post.id %>-comments">

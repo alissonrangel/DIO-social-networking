@@ -1791,3 +1791,43 @@ end
 
 - criar: app/views/user/comments/create.js.erb
 //vazio
+
+12.5) original não funcionou
+
+- app/controllers/user/comments_controller.rb
+
+class User::CommentsController < UserController
+  def create
+    f_params = form_params.merge(user: current_user)
+    @comment = Comment.new(f_params)
+    @post = @comment.post
+
+    if @comment.save
+      # respond_to do |f|
+      #   f.js { render "create" }
+      # end
+      redirect_to root_path
+    end
+  end
+  private
+  def form_params
+    params.require(:comment).permit(:body, :post_id)
+  end
+end
+
+- app/controllers/user/timeline_controller.rb
+ids << current_user.id
+
+- app/views/user/_post_card.html.erb
+<%= form_with(model: [:user, @comment]) do |f| %>
+  <%= f.hidden_field(:post_id, value: post.id) %>
+  <div class="form-group">    
+    <%= f.text_area :body, rows: 2, class: 'form-control', placeholder: 'Escreva seu comentário...', required: true %>    
+  </div>
+  <div class="d-flex">    
+    <button type="submit" class="btn btn-sm btn-primary ml-auto">Enviar</button>
+  </div>
+<% end %>
+
+- app/views/user/comments/create.js.erb
+$("#post<%= @post.id %>-comments").prepend('<%= j render "comment_card", comment: @comment %>');
