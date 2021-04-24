@@ -6,10 +6,21 @@ class User::CommentsController < UserController
     @post = @comment.post
 
     if @comment.save
-      # respond_to do |f|
-      #   f.js { render "create" }
+      # respond_to do |format|
+      #   format.js { render "create" }
       # end
       redirect_to root_path
+    end
+  end
+
+  def destroy
+    @comment = Comment.find_by(id: params[:id])
+    @post = @comment.post
+
+    if @comment.destroy
+      respond_to do |format|
+        format.js { render "destroy" }
+      end
     end
   end
 
